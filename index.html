@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Portafolio</title>
 
-    <!-- CSS UNIFICADO -->
     <style>
         body {
             background: #0d0d0d;
@@ -20,18 +19,16 @@
             text-align: center;
         }
 
-        header button, .whatsapp {
+        header button, .whatsapp, .whatsapp-proyecto {
             padding: 10px;
             background: #00ff66;
             border: none;
             cursor: pointer;
             margin: 5px;
             font-weight: bold;
-        }
-
-        .whatsapp {
             text-decoration: none;
             color: black;
+            display: inline-block;
         }
 
         #proyectos {
@@ -77,96 +74,101 @@
 </head>
 <body>
 
-    <!-- CONTENIDO HTML -->
-    <header>
-        <h1>Mi Portafolio</h1>
-        <p>Muestra profesional de mis páginas web — haz tu pedido por WhatsApp</p>
-        <button onclick="abrirEditor()">Entrar como editor</button>
-        <a href="https://wa.me/584166964264" class="whatsapp" target="_blank">Pedir por WhatsApp</a>
-    </header>
+<header>
+    <h1>Mi Portafolio</h1>
+    <p>Muestra profesional de mis páginas web — haz tu pedido por WhatsApp</p>
+    <button onclick="abrirEditor()">Entrar como editor</button>
+    <a href="https://wa.me/584166964264" class="whatsapp" target="_blank">Pedir por WhatsApp</a>
+</header>
 
-    <section id="presentacion">
-        <h2>Hola — Soy desarrollador web</h2>
-        <p>En este espacio muestro mis proyectos. Si quieres encargar un trabajo usa el botón de WhatsApp.</p>
-    </section>
+<section id="presentacion">
+    <h2>Hola — Soy desarrollador web</h2>
+    <p>En este espacio muestro mis proyectos. Si quieres encargar un trabajo usa el botón de WhatsApp.</p>
+</section>
 
-    <section id="proyectos">
-        <h2>Mis proyectos publicados</h2>
-        <div id="contenedor-proyectos">No hay proyectos publicados aún.</div>
-    </section>
+<section id="proyectos">
+    <h2>Mis proyectos publicados</h2>
+    <div id="contenedor-proyectos">No hay proyectos publicados aún.</div>
+</section>
 
-    <!-- Modal Editor -->
-    <div id="modal" class="modal">
-        <div class="modal-contenido">
-            <span class="cerrar" onclick="cerrarModal()">&times;</span>
-            <h3>Agregar proyecto</h3>
-            <input type="password" id="password" placeholder="Contraseña">
-            <input type="text" id="titulo" placeholder="Título del proyecto">
-            <input type="text" id="descripcion" placeholder="Descripción breve">
-            <input type="text" id="url" placeholder="URL del proyecto">
-            <button onclick="agregarProyecto()">Guardar proyecto</button>
-        </div>
+<!-- Modal -->
+<div id="modal" class="modal">
+    <div class="modal-contenido">
+        <span class="cerrar" onclick="cerrarModal()">&times;</span>
+        <h3>Agregar proyecto</h3>
+        <input type="password" id="password" placeholder="Contraseña">
+        <input type="text" id="titulo" placeholder="Título del proyecto">
+        <input type="text" id="descripcion" placeholder="Descripción breve">
+        <input type="text" id="url" placeholder="URL del proyecto">
+        <button onclick="agregarProyecto()">Guardar proyecto</button>
     </div>
+</div>
 
-    <!-- JAVASCRIPT UNIFICADO -->
-    <script>
-        const ADMIN_PASSWORD = "MiClave123"; // CAMBIA ESTA CLAVE
+<script>
+    const ADMIN_PASSWORD = "28315645";
 
-        function abrirEditor() {
-            document.getElementById("modal").style.display = "block";
+    function abrirEditor() {
+        document.getElementById("modal").style.display = "block";
+    }
+
+    function cerrarModal() {
+        document.getElementById("modal").style.display = "none";
+    }
+
+    function agregarProyecto() {
+        const pass = document.getElementById("password").value;
+
+        if (pass !== ADMIN_PASSWORD) {
+            alert("Contraseña incorrecta");
+            return;
         }
 
-        function cerrarModal() {
-            document.getElementById("modal").style.display = "none";
+        let titulo = document.getElementById("titulo").value;
+        let descripcion = document.getElementById("descripcion").value;
+        let url = document.getElementById("url").value;
+
+        if (!titulo || !descripcion || !url) {
+            alert("Completa todos los campos");
+            return;
         }
 
-        function agregarProyecto() {
-            const pass = document.getElementById("password").value;
-          const ADMIN_PASSWORD = "28315645";
-{
-                alert("Contraseña incorrecta");
-                return;
-            }
+        let proyectos = JSON.parse(localStorage.getItem("proyectos")) || [];
+        proyectos.push({ titulo, descripcion, url });
 
-            let titulo = document.getElementById("titulo").value;
-            let descripcion = document.getElementById("descripcion").value;
-            let url = document.getElementById("url").value;
+        localStorage.setItem("proyectos", JSON.stringify(proyectos));
 
-            if (!titulo || !descripcion || !url) {
-                alert("Completa todos los campos");
-                return;
-            }
+        mostrarProyectos();
+        cerrarModal();
+        alert("¡Proyecto agregado exitosamente!");
+    }
 
-            let proyectos = JSON.parse(localStorage.getItem("proyectos")) || [];
-            proyectos.push({ titulo, descripcion, url });
-            localStorage.setItem("proyectos", JSON.stringify(proyectos));
+    function mostrarProyectos() {
+        let contenedor = document.getElementById("contenedor-proyectos");
+        let proyectos = JSON.parse(localStorage.getItem("proyectos")) || [];
 
-            mostrarProyectos();
-            cerrarModal();
+        if (proyectos.length === 0) {
+            contenedor.innerHTML = "No hay proyectos publicados aún.";
+            return;
         }
 
-        function mostrarProyectos() {
-            let contenedor = document.getElementById("contenedor-proyectos");
-            let proyectos = JSON.parse(localStorage.getItem("proyectos")) || [];
+        contenedor.innerHTML = "";
+        proyectos.forEach(p => {
+            contenedor.innerHTML += `
+                <div class="proyecto">
+                    <h3>${p.titulo}</h3>
+                    <p>${p.descripcion}</p>
+                    <a href="${p.url}" target="_blank">Ver proyecto</a><br><br>
+                    <a href="https://wa.me/584166964264?text=Hola%20quiero%20información%20sobre%20el%20proyecto%20${encodeURIComponent(p.titulo)}" 
+                    class="whatsapp-proyecto" target="_blank">Hacer pedido por WhatsApp</a>
+                </div>
+            `;
+        });
+    }
 
-            if (proyectos.length === 0) {
-                contenedor.innerHTML = "No hay proyectos publicados aún.";
-                return;
-            }
+    window.onload = mostrarProyectos;
+</script>
 
-            contenedor.innerHTML = "";
-            proyectos.forEach(p => {
-                contenedor.innerHTML += `
-                    <div class="proyecto">
-                        <h3>${p.titulo}</h3>
-                        <p>${p.descripcion}</p>
-                        <a href="${p.url}" target="_blank">Ver proyecto</a>
-                    </div>
-                `;
-            });
-        }
-
-        window.onload = mostrarProyectos;
-    </script>
 </body>
 </html>
+
+
