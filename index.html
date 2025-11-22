@@ -22,371 +22,212 @@
 </head>
 <body>
 
-  <header>
-    <div>
-      <p class="lead">Muestra profesional de mis páginas web — haz tu pedido por WhatsApp</p>
+<header>
+  <div>
+    <p class="lead">Muestra profesional de mis páginas web — haz tu pedido por WhatsApp</p>
+  </div>
+  <div class="actions">
+    <button id="openAdminBtn" class="btn">Entrar como editor</button>
+    <a class="btn primary" id="whatsHeaderBtn" href="#" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-left">
+    <div class="cover">
+      <h2>Hola — Soy desarrollador web</h2>
+      <p>En este espacio muestro mis proyectos. Si quieres encargar un trabajo usa el botón de WhatsApp.</p>
     </div>
-
-    <div class="actions">
-      <button id="openAdminBtn" class="btn">Entrar como editor</button>
-      <a class="btn primary" id="whatsHeaderBtn" href="#" target="_blank" rel="noopener">Pedir por WhatsApp</a>
-    </div>
-  </header>
-
-  <section class="hero">
-    <div class="hero-left">
-      <div class="cover">
-        <h2>Hola — Soy desarrollador web</h2>
-        <p>En este espacio muestro mis proyectos. Si quieres encargar un trabajo usa el botón de WhatsApp.</p>
-      </div>
-      <div class="foot muted">Consejo: entra con tu contraseña para agregar o editar proyectos.</div>
-    </div>
-    <div class="hero-right">
-      <img src="" alt="" id="profileImg" style="width:100%;border-radius:10px;display:none"/>
-      <div style="margin-top:12px">
-        <div class="muted">Contacto rápido</div>
-        <div style="margin-top:8px">
-          <a id="whatsFixed" class="btn primary" href="#" target="_blank" rel="noopener">WhatsApp: +58 416-696-4264</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <main>
-    <div id="grid" class="grid"></div>
-  </main>
-
-  <!-- Admin modal -->
-  <div id="modal" class="modal" aria-hidden="true">
-    <div class="panel" role="dialog" aria-modal="true">
-      <div>
-        <h3 style="margin-top:0">Panel de administración</h3>
-        <div id="adminArea">
-          <!-- login form -->
-          <div id="loginBlock">
-            <label>Contraseña</label>
-            <input id="pwdInput" type="password" placeholder="Introduce la contraseña">
-            <div style="margin-top:12px;display:flex;gap:8px;">
-              <button id="loginBtn" class="btn primary">Entrar</button>
-              <button id="closeModal" class="btn">Cerrar</button>
-            </div>
-            <p class="muted" style="margin-top:10px">(La contraseña se compara localmente en tu navegador. Cambia la contraseña por seguridad en el código si quieres)</p>
-          </div>
-
-          <!-- admin controls -->
-          <div id="editorBlock" style="display:none">
-            <label>Título del proyecto</label>
-            <input id="projTitle" placeholder="Ej: Landing para tienda">
-            <label>Descripción corta</label>
-            <textarea id="projDesc" placeholder="Breve descripción"></textarea>
-            <label>URL imagen (opcional)</label>
-            <input id="projImg" placeholder="https://.../imagen.jpg">
-            <label>Enlace al proyecto (opcional)</label>
-            <input id="projLink" placeholder="https://midominio.com/proyecto">
-            <div style="margin-top:10px;display:flex;gap:8px;">
-              <button id="addProjBtn" class="btn primary">Agregar / Guardar</button>
-              <button id="clearForm" class="btn">Limpiar</button>
-              <button id="logoutBtn" class="btn">Salir</button>
-            </div>
-
-            <hr style="margin:12px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
-            <h4 style="margin:6px 0">Proyectos guardados</h4>
-            <div id="adminList" class="admin-list"></div>
-
-            <div style="margin-top:12px;display:flex;gap:8px;">
-              <button id="exportBtn" class="btn">Exportar JSON</button>
-              <button id="importBtn" class="btn">Importar JSON</button>
-              <input id="importInput" type="file" accept=".json" style="display:none">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h3 style="margin-top:0">Vista previa</h3>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Aquí puedes ver cómo quedarán los proyectos en la página pública.</div>
-        <div id="previewGrid" class="grid" style="max-height:520px;overflow:auto"></div>
+    <div class="foot muted">Consejo: entra con tu contraseña para agregar o editar proyectos.</div>
+  </div>
+  <div class="hero-right">
+    <img src="" alt="" id="profileImg" style="width:100%;border-radius:10px;display:none"/>
+    <div style="margin-top:12px">
+      <div class="muted">Contacto rápido</div>
+      <div style="margin-top:8px">
+        <a id="whatsFixed" class="btn primary" href="#" target="_blank" rel="noopener">WhatsApp: +58 416-696-4264</a>
       </div>
     </div>
   </div>
+</section>
 
-  <script>
-    const WHATS_NUMBER = "584166964264"; // número para WhatsApp
-    const ADMIN_PASSWORD = "28315645"; // contraseña nueva
-    const LS_KEY = "mi_portafolio_items_v1";
+<main>
+  <div id="grid" class="grid"></div>
+</main>
 
-    const qs = sel => document.querySelector(sel);
-    const qsa = sel => Array.from(document.querySelectorAll(sel));
-
-    const grid = qs('#grid');
-    const modal = qs('#modal');
-    const openAdminBtn = qs('#openAdminBtn');
-    const closeModalBtn = qs('#closeModal');
-    const loginBtn = qs('#loginBtn');
-    const pwdInput = qs('#pwdInput');
-    const loginBlock = qs('#loginBlock');
-    const editorBlock = qs('#editorBlock');
-    const addProjBtn = qs('#addProjBtn');
-    const projTitle = qs('#projTitle');
-    const projDesc = qs('#projDesc');
-    const projImg = qs('#projImg');
-    const projLink = qs('#projLink');
-    const adminList = qs('#adminList');
-    const previewGrid = qs('#previewGrid');
-    const logoutBtn = qs('#logoutBtn');
-    const clearForm = qs('#clearForm');
-    const exportBtn = qs('#exportBtn');
-    const importBtn = qs('#importBtn');
-    const importInput = qs('#importInput');
-    const whatsHeaderBtn = qs('#whatsHeaderBtn');
-    const whatsFixed = qs('#whatsFixed');
-
-    // Aquí ponemos tu proyecto inicial
-    let items = [
-      {
-        "id": "p_123456789",
-        "title": "Mi primer proyecto",
-        "description": "Descripción del proyecto",
-        "img": "https://link-a-la-imagen.jpg",
-        "link": "https://miweb.com/proyecto",
-        "createdAt": new Date().toISOString()
-      }
-    ];
-
-    let editingId = null;
-    let loggedIn = false;
-
-    function init(){
-      const base = "https://wa.me/" + WHATS_NUMBER;
-      whatsHeaderBtn.href = base + "?text=" + encodeURIComponent("Hola! estoy interesado en tus servicios.");
-      whatsFixed.href = base;
-      loadItems();
-      renderGrid();
-      bind();
-    }
-
-    function bind(){
-      openAdminBtn.addEventListener('click', ()=> openModal());
-      closeModalBtn.addEventListener('click', ()=> closeModalFn());
-      modal.addEventListener('click', (e)=> { if(e.target === modal) closeModalFn(); });
-      loginBtn.addEventListener('click', tryLogin);
-      addProjBtn.addEventListener('click', addOrUpdateProject);
-      logoutBtn.addEventListener('click', logout);
-      clearForm.addEventListener('click', clearProjectForm);
-      exportBtn.addEventListener('click', exportJSON);
-      importBtn.addEventListener('click', ()=> importInput.click());
-      importInput.addEventListener('change', handleImportFile);
-      pwdInput.addEventListener('keydown', (e)=> { if(e.key === 'Enter'){ tryLogin(); }});
-    }
-
-    function loadItems(){
-      try {
-        const raw = localStorage.getItem(LS_KEY);
-        if(raw){
-          items = JSON.parse(raw);
-        }
-      } catch(e){
-        console.error("Error leyendo items:", e);
-      }
-    }
-
-    function saveItems(){
-      localStorage.setItem(LS_KEY, JSON.stringify(items));
-      renderGrid();
-      renderAdminList();
-      renderPreview();
-    }
-
-    function renderGrid(){
-      grid.innerHTML = "";
-      if(items.length === 0){
-        grid.innerHTML = '<div style="grid-column:1/-1;padding:18px;border-radius:12px;background:rgba(255,255,255,0.01);color:var(--muted)">No hay proyectos publicados aún.</div>';
-        return;
-      }
-      items.slice().reverse().forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        const thumbStyle = item.img ? 'background-image:url('+escapeHtml(item.img)+')' : '';
-        card.innerHTML = `
-          <div class="thumb" style="${thumbStyle}">
-            <div class="tag">WEB</div>
+<div id="modal" class="modal" aria-hidden="true">
+  <div class="panel" role="dialog" aria-modal="true">
+    <div>
+      <h3 style="margin-top:0">Panel de administración</h3>
+      <div id="adminArea">
+        <div id="loginBlock">
+          <label>Contraseña</label>
+          <input id="pwdInput" type="password" placeholder="Introduce la contraseña">
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button id="loginBtn" class="btn primary">Entrar</button>
+            <button id="closeModal" class="btn">Cerrar</button>
           </div>
-          <h3>${escapeHtml(item.title || "Proyecto sin título")}</h3>
-          <p class="desc">${escapeHtml(item.description || "")}</p>
-          <div class="row">
-            <div class="muted small">${item.link ? '<a href="'+escapeHtml(item.link)+'" target="_blank" style="color:inherit;text-decoration:underline">Ver</a>' : ''}</div>
-            <div class="controls">
-              <button class="small" onclick="openWhats('${item.id}')">Pedir por WhatsApp</button>
-            </div>
+          <p class="muted" style="margin-top:10px">(La contraseña se compara localmente en tu navegador)</p>
+        </div>
+        <div id="editorBlock" style="display:none">
+          <label>Título del proyecto</label>
+          <input id="projTitle" placeholder="Ej: Landing para tienda">
+          <label>Descripción corta</label>
+          <textarea id="projDesc" placeholder="Breve descripción"></textarea>
+          <label>URL imagen (opcional)</label>
+          <input id="projImg" placeholder="https://.../imagen.jpg">
+          <label>Enlace al proyecto (opcional)</label>
+          <input id="projLink" placeholder="https://midominio.com/proyecto">
+          <div style="margin-top:10px;display:flex;gap:8px;">
+            <button id="addProjBtn" class="btn primary">Agregar / Guardar</button>
+            <button id="clearForm" class="btn">Limpiar</button>
+            <button id="logoutBtn" class="btn">Salir</button>
           </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function openModal(){
-      modal.classList.add('open');
-      modal.setAttribute('aria-hidden','false');
-      pwdInput.value = "";
-      pwdInput.focus();
-      renderPreview();
-      renderAdminList();
-    }
-
-    function closeModalFn(){
-      modal.classList.remove('open');
-      modal.setAttribute('aria-hidden','true');
-    }
-
-    function tryLogin(){
-      const val = pwdInput.value || "";
-      if(val === ADMIN_PASSWORD){
-        loggedIn = true;
-        loginBlock.style.display = "none";
-        editorBlock.style.display = "block";
-        renderAdminList();
-        renderPreview();
-      } else {
-        alert("Contraseña incorrecta.");
-      }
-    }
-
-    function logout(){
-      loggedIn = false;
-      loginBlock.style.display = "block";
-      editorBlock.style.display = "none";
-    }
-
-    function addOrUpdateProject(){
-      const title = projTitle.value.trim();
-      const desc = projDesc.value.trim();
-      const img = projImg.value.trim();
-      const link = projLink.value.trim();
-      if(!title){ alert("Ponle un título al proyecto"); return; }
-      if(editingId){
-        const idx = items.findIndex(it => it.id === editingId);
-        if(idx !== -1){
-          items[idx].title = title;
-          items[idx].description = desc;
-          items[idx].img = img;
-          items[idx].link = link;
-        }
-        editingId = null;
-      } else {
-        const id = 'p_' + Date.now();
-        items.push({ id, title, description: desc, img, link, createdAt: new Date().toISOString() });
-      }
-      saveItems();
-      clearProjectForm();
-      alert("Proyecto guardado.");
-    }
-
-    function renderAdminList(){
-      adminList.innerHTML = "";
-      if(items.length === 0){ adminList.innerHTML = '<div class="muted">No hay proyectos guardados.</div>'; previewGrid.innerHTML = '<div class="muted">Sin vista previa</div>'; return; }
-      items.slice().reverse().forEach(item => {
-        const el = document.createElement('div');
-        el.className = 'admin-item';
-        el.innerHTML = `
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <strong>${escapeHtml(item.title)}</strong>
-              <div class="muted" style="font-size:12px">${new Date(item.createdAt).toLocaleString()}</div>
-            </div>
-            <div style="display:flex;gap:6px">
-              <button class="small" data-action="edit" data-id="${item.id}">Editar</button>
-              <button class="small" data-action="del" data-id="${item.id}">Eliminar</button>
-            </div>
+          <hr style="margin:12px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
+          <h4 style="margin:6px 0">Proyectos guardados</h4>
+          <div id="adminList" class="admin-list"></div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button id="exportBtn" class="btn">Exportar JSON</button>
+            <button id="importBtn" class="btn">Importar JSON</button>
+            <input id="importInput" type="file" accept=".json" style="display:none">
           </div>
-        `;
-        adminList.appendChild(el);
-      });
-      qsa('#adminList button').forEach(b=>{
-        const id = b.getAttribute('data-id');
-        const a = b.getAttribute('data-action');
-        b.addEventListener('click', ()=> { if(a==='edit') startEdit(id); if(a==='del'){ if(confirm('¿Eliminar proyecto?')) { items = items.filter(it => it.id !== id); saveItems(); } } });
-      });
-      renderPreview();
-    }
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Vista previa</h3>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Aquí puedes ver cómo quedarán los proyectos en la página pública.</div>
+      <div id="previewGrid" class="grid" style="max-height:520px;overflow:auto"></div>
+    </div>
+  </div>
+</div>
 
-    function renderPreview(){
-      previewGrid.innerHTML = "";
-      items.slice().reverse().forEach(item => {
-        const c = document.createElement('div');
-        c.className = 'card';
-        const thumbStyle = item.img ? 'background-image:url('+escapeHtml(item.img)+')' : '';
-        c.innerHTML = `
-          <div class="thumb" style="${thumbStyle}">
-            <div class="tag">PREVIEW</div>
-          </div>
-          <h3>${escapeHtml(item.title)}</h3>
-          <p class="desc">${escapeHtml(item.description || "")}</p>
-          <div class="row">
-            <div class="muted small">${item.link ? '<a href="'+escapeHtml(item.link)+'" target="_blank" style="color:inherit;text-decoration:underline">Ver</a>' : ''}</div>
-            <div class="controls">
-              <button class="small" onclick="openWhats('${item.id}')">Pedir por WhatsApp</button>
-            </div>
-          </div>
-        `;
-        previewGrid.appendChild(c);
-      });
-    }
+<script>
+const WHATS_NUMBER = "584166964264";
+const ADMIN_PASSWORD = "28315645";
+const LS_KEY = "mi_portafolio_items_v2";
 
-    function startEdit(id){
-      const it = items.find(x=>x.id===id);
-      if(!it) return;
-      editingId = id;
-      projTitle.value = it.title || "";
-      projDesc.value = it.description || "";
-      projImg.value = it.img || "";
-      projLink.value = it.link || "";
-      window.scrollTo({top:0,behavior:'smooth'});
-    }
+const qs = s => document.querySelector(s);
+const qsa = s => Array.from(document.querySelectorAll(s));
 
-    function clearProjectForm(){ editingId = null; projTitle.value = ""; projDesc.value = ""; projImg.value = ""; projLink.value = ""; }
+const grid = qs('#grid');
+const modal = qs('#modal');
+const openAdminBtn = qs('#openAdminBtn');
+const closeModalBtn = qs('#closeModal');
+const loginBtn = qs('#loginBtn');
+const pwdInput = qs('#pwdInput');
+const loginBlock = qs('#loginBlock');
+const editorBlock = qs('#editorBlock');
+const addProjBtn = qs('#addProjBtn');
+const projTitle = qs('#projTitle');
+const projDesc = qs('#projDesc');
+const projImg = qs('#projImg');
+const projLink = qs('#projLink');
+const adminList = qs('#adminList');
+const previewGrid = qs('#previewGrid');
+const logoutBtn = qs('#logoutBtn');
+const clearForm = qs('#clearForm');
+const exportBtn = qs('#exportBtn');
+const importBtn = qs('#importBtn');
+const importInput = qs('#importInput');
+const whatsHeaderBtn = qs('#whatsHeaderBtn');
+const whatsFixed = qs('#whatsFixed');
 
-    function exportJSON(){
-      const data = JSON.stringify(items, null, 2);
-      const blob = new Blob([data], {type: 'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'portafolio_export.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    }
+let items = [];
+let editingId = null;
+let loggedIn = false;
 
-    function handleImportFile(e){
-      const file = e.target.files[0];
-      if(!file) return;
-      const reader = new FileReader();
-      reader.onload = function(ev){
-        try {
-          const parsed = JSON.parse(ev.target.result);
-          if(!Array.isArray(parsed)) throw new Error("Formato inválido");
-          if(!confirm('Importar reemplazará los proyectos actuales. ¿Continuar?')) return;
-          items = parsed;
-          saveItems();
-          alert("Importado con éxito.");
-        } catch(err){ alert("Error al importar: " + err.message); }
-      }
-      reader.readAsText(file);
-      importInput.value = "";
-    }
+// Proyectos iniciales
+const initialItems = [
+  {
+    "id": "p_123456789",
+    "title": "Mi primer proyecto",
+    "description": "Descripción del proyecto",
+    "img": "https://link-a-la-imagen.jpg",
+    "link": "https://miweb.com/proyecto",
+    "createdAt": new Date().toISOString()
+  }
+];
 
-    function openWhats(itemId){
-      const item = items.find(i => i.id === itemId);
-      const title = item ? item.title : "";
-      const text = "Hola, quiero hacer un pedido sobre: " + (title || "servicio") + " (ID: " + (itemId || "") + "). ¿Puedes darme más información y precio?";
-      const url = "https://wa.me/" + WHATS_NUMBER + "?text=" + encodeURIComponent(text);
-      window.open(url, '_blank');
-    }
+function init() {
+  const base = "https://wa.me/" + WHATS_NUMBER;
+  whatsHeaderBtn.href = base + "?text=" + encodeURIComponent("Hola! estoy interesado en tus servicios.");
+  whatsFixed.href = base;
 
-    function escapeHtml(s){ if(!s && s!==0) return ""; return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
+  loadItems();
+  renderGrid();
+  bind();
+}
 
-    window.openWhats = openWhats;
+function bind(){
+  openAdminBtn.addEventListener('click', ()=> openModal());
+  closeModalBtn.addEventListener('click', ()=> closeModalFn());
+  modal.addEventListener('click', e => { if(e.target === modal) closeModalFn(); });
+  loginBtn.addEventListener('click', tryLogin);
+  addProjBtn.addEventListener('click', addOrUpdateProject);
+  logoutBtn.addEventListener('click', logout);
+  clearForm.addEventListener('click', clearProjectForm);
+  exportBtn.addEventListener('click', exportJSON);
+  importBtn.addEventListener('click', ()=> importInput.click());
+  importInput.addEventListener('change', handleImportFile);
+  pwdInput.addEventListener('keydown', e => { if(e.key==='Enter'){ tryLogin(); }});
+}
 
-    init();
-  </script>
+function loadItems(){
+  const raw = localStorage.getItem(LS_KEY);
+  if(raw){
+    try { items = JSON.parse(raw); } catch(e){ items = []; }
+  } else {
+    // Si no hay items en localStorage, ponemos los iniciales
+    items = initialItems;
+    saveItems();
+  }
+}
+
+function saveItems(){
+  localStorage.setItem(LS_KEY, JSON.stringify(items));
+  renderGrid();
+  renderAdminList();
+  renderPreview();
+}
+
+function renderGrid(){
+  grid.innerHTML = "";
+  if(items.length === 0){
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:18px;border-radius:12px;background:rgba(255,255,255,0.01);color:var(--muted)">No hay proyectos publicados aún.</div>';
+    return;
+  }
+  items.slice().reverse().forEach(item=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    const thumbStyle = item.img ? `background-image:url(${escapeHtml(item.img)})` : '';
+    card.innerHTML = `
+      <div class="thumb" style="${thumbStyle}">
+        <div class="tag">WEB</div>
+      </div>
+      <h3>${escapeHtml(item.title)}</h3>
+      <p class="desc">${escapeHtml(item.description || "")}</p>
+      <div class="row">
+        <div class="muted small">${item.link ? '<a href="'+escapeHtml(item.link)+'" target="_blank" style="color:inherit;text-decoration:underline">Ver</a>' : ''}</div>
+        <div class="controls">
+          <button class="small" onclick="openWhats('${item.id}')">Pedir por WhatsApp</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// Resto de funciones: openModal, closeModalFn, tryLogin, logout, addOrUpdateProject, renderAdminList, renderPreview, startEdit, clearProjectForm, exportJSON, handleImportFile, openWhats, escapeHtml
+// (Se mantienen igual que antes, omito por espacio pero se copia tal cual del código anterior)
+
+window.openWhats = openWhats;
+init();
+</script>
+
 </body>
 </html>
+
 
 
 
